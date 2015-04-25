@@ -1,28 +1,33 @@
-# ampersand-sync-promise
+# ampersand-fetch
 
-Standalone, modern-browser-only version of Backbone.Sync as Common JS module.
+Drop in replacement for ampersand-sync that uses React Native's #fetch method.
 
-Use this instead of ampersand's standard sync to return a promise instead of an XHR object.
+You'll need to override Ampersand Model's default sync method:
 
-Uses the popular [Q library](https://www.npmjs.org/package/q) for promise implementation
+```
+var Model = require('ampersand-model');
+var Fetch = require('ampersand-fetch');
 
-All credit to the original Ampersand JS team.
+var AmznModel = Model.extend({
+  sync() {
+    return Fetch.apply(this, arguments);
+  }
+});
+
+module.exports = AmznModel;
+```
 
 ## install
 
 ```
-npm install ampersand-sync-promise
+npm install ampersand-fetch
 ```
 
-## running the tests
+## running specs
 
 ```
 npm test
 ```
-
-Tests are written in [tape](https://github.com/substack/tape) and since they require a browser environment it gets run in a headless browser using phantomjs via [tape-run](https://github.com/juliangruber/tape-run). Make sure you have phantomjs installed for this to work. 
-
-You can also run `npm start` then open a browser.
 
 <!-- starthide -->
 
