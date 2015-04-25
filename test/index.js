@@ -1,26 +1,5 @@
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== "function") {
-      // closest thing possible to the ECMAScript 5 internal IsCallable function
-      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-    }
-
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP = function () {},
-        fBound = function () {
-          return fToBind.apply(this instanceof fNOP && oThis ? this: oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
-
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
-
-    return fBound;
-  };
-}
-
 var redtape = require('redtape');
-var sync = require('../ampersand-sync-promise');
+var fetch = require('../ampersand-fetch');
 var Model = require('ampersand-model');
 
 var Me = Model.extend({
@@ -56,15 +35,14 @@ var test = redtape({
 });
 
 test('should allow models to overwrite ajax configs at the model level', function (t) {
-  t.plan(3);
+  t.plan(2);
 
   model.on('request', function (model, xhr, options, ajaxSettings) {
     t.equal(ajaxSettings.type, 'GET');
-    t.equal(ajaxSettings.xhrFields.withCredentials, true);
     t.equal(ajaxSettings.useXDR, true);
     t.end();
   });
-  sync('read', model);
+  fetch('read', model);
 });
 
 test('read', function (t) {
@@ -76,7 +54,7 @@ test('read', function (t) {
     t.ok(!ajaxSettings.data);
     t.end();
   });
-  model.sync('read', model);
+  model.fetch('read', model);
 });
 
 test('passing data', function (t) {
@@ -86,7 +64,7 @@ test('passing data', function (t) {
     t.equal(ajaxSettings.url, '/hi?a=a&one=1', 'data passed to reads should be made into a query string');
     t.end();
   });
-  sync('read', model, {data: {a: 'a', one: 1}});
+  fetch('read', model, {data: {a: 'a', one: 1}});
 });
 
 test('create', function (t) {
@@ -100,8 +78,8 @@ test('create', function (t) {
     t.equal(data.length, 123);
     t.end();
   });
-  
-  sync('create', model);
+
+  fetch('create', model);
 });
 
 test('update', function (t) {
@@ -115,12 +93,12 @@ test('update', function (t) {
     t.equal(data.author, 'Shakespeare');
     t.end();
   });
-  
-  sync('update', model);
+
+  fetch('update', model);
 });
 
 test('update with emulateHTTP and emulateJSON', function (t) {
-  
+
   model.on('request', function(model, xhr, options, ajaxSettings){
     t.equal(ajaxSettings.url, '/hi');
     t.equal(ajaxSettings.type, 'POST');
@@ -134,7 +112,7 @@ test('update with emulateHTTP and emulateJSON', function (t) {
     emulateJSON: true
   };
 
-  sync('update', model, options);
+  fetch('update', model, options);
 
 });
 
@@ -150,16 +128,16 @@ test('update with just emulateHTTP', function (t) {
     t.equal(data.length, 123);
     t.end();
   });
-  
+
   var options = {
     emulateHTTP: true
   };
 
-  sync('update', model, options);
+  fetch('update', model, options);
 });
 
 test("update with just emulateJSON", function (t) {
-  
+
 
   model.on('request', function(model, xhr, options, ajaxSettings){
     t.equal(ajaxSettings.url, '/hi');
@@ -168,13 +146,13 @@ test("update with just emulateJSON", function (t) {
     t.equal(ajaxSettings.body, 'model%5Btitle%5D=Midsummer%20Nights%20Dream&model%5Bauthor%5D=Shakespeare&model%5Blength%5D=123');
     t.end();
   });
-  
+
   var options = {
     emulateJSON: true
   };
-  
-  sync('update', model, options);
-  
+
+  fetch('update', model, options);
+
 });
 
 test('delete', function (t) {
@@ -184,51 +162,23 @@ test('delete', function (t) {
     t.notOk(ajaxSettings.data);
     t.end();
   });
-  
-  sync('delete', model);
-});
 
-test('destroy with emulateHTTP', function (t) {
-  model.on('request', function(model, xhr, options, ajaxSettings){
-    t.equal(xhr.ajaxSettings.url, '/hi');
-    t.equal(xhr.ajaxSettings.type, 'POST');
-    t.equal(xhr.ajaxSettings.body, '_method=DELETE');
-    t.end();
-  });
-
-  var options = {
-    emulateHTTP: true,
-    emulateJSON: true
-  };
-  sync('delete', model, options);
+  fetch('delete', model);
 });
 
 test('urlError', function (t) {
   t.throws(function () {
-    var xhr = sync('read', {});
+    var xhr = fetch('read', {});
   }, Error);
-  t.end();
-});
-
-test('Call user provided beforeSend function.', function (t) {
-  t.plan(1);
-
-  var options = {
-    beforeSend: function (_xhr) {
-      t.pass();
-    },
-    emulateHTTP: true
-  };
-  sync('delete', model, options);
   t.end();
 });
 
 test('Sync returns a promise', function(t) {
   t.plan(2);
-  
-  var promise = sync('read', model);
-  
-  t.ok(promise.done);
-  t.ok(promise.finally);
+
+  var promise = fetch('read', model);
+
+  t.ok(promise.then);
+  t.ok(promise.catch);
   t.end();
 });
