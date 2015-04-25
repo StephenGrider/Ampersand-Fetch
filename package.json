@@ -1,19 +1,17 @@
 {
-  "name": "ampersand-sync-promise",
-  "description": "Standalone, modern-browser-only version of Backbone.Sync as Common JS module. Fork of the original ampersand-js-sync, but instead returns a promise.  All credit to original Ampersand JS team.",
-  "version": "1.0.0",
+  "name": "ampersand-fetch",
+  "description": "Ampersand's sync implemented with Chrome's native .fetch.  Works with React Native too.",
+  "version": "0.1.0",
   "author": "Stephen Grider <ste.grider@gmail.com",
   "bugs": {
-    "url": "https://github.com/stephengrider/ampersand-sync-promise/issues"
+    "url": "https://github.com/stephengrider/ampersand-fetch/issues"
   },
   "dependencies": {
     "qs": "^1.2.1",
-    "tap-spec": "^0.2.0",
     "underscore": "~1.6.0",
-    "xhr": "^1.10.0",
-    "q": "~1.0.1"
   },
   "devDependencies": {
+    "tap-spec": "^0.2.0",
     "ampersand-model": "^4.0.1",
     "ampersand-rest-collection": "^2.0.1",
     "browserify": "^5.9.3",
@@ -28,32 +26,26 @@
     "backbone",
     "sync",
     "rest",
-    "ampersand"
+    "ampersand",
+    "chrome",
+    "fetch",
+    "react-native"
   ],
   "license": "MIT",
-  "main": "ampersand-sync-promise.js",
+  "main": "ampersand-fetch.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stephengrider/ampersand-sync-promise.git"
+    "url": "https://github.com/stephengrider/ampersand-fetch.git"
   },
   "scripts": {
     "start": "run-browser test/*",
-    "test": "browserify test/* | tape-run | tap-spec"
+    "test": "browserify test/* | tape-run --browser chrome | tap-spec"
   },
   "testling": {
     "files": "test/*.js",
     "browsers": [
-      "ie/8..latest",
-      "firefox/17..latest",
-      "firefox/nightly",
       "chrome/22..latest",
-      "chrome/canary",
-      "opera/12..latest",
-      "opera/next",
-      "safari/5.1..latest",
-      "ipad/6.0..latest",
-      "iphone/6.0..latest",
-      "android-browser/4.2..latest"
+      "chrome/canary"
     ]
   }
 }
