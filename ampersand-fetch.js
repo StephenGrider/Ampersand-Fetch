@@ -26,8 +26,8 @@ module.exports = function (method, model, options) {
 
   // Ensure that we have a URL.
   if (options.url) {
-    url = options.url
-  } else (!options.url) {
+    url = options.url;
+  } else{
     url = _.result(model, 'url') || urlError();
   }
 
