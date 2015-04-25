@@ -83,19 +83,30 @@ module.exports = function (method, model, options) {
 
   var ajaxSettings = _.extend(params, options, {url: url});
 
-  var promise = fetch(url, ajaxSettings)
-    .then(function(res) {
-      if(res.ok && options.success && _.isFunction(options.success)) {
-        var json = {};
-        try {
-          json = res.json();
-        } catch (e) {}
+  function status(response) {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    }
+    throw new Error(response.statusText);
+  }
 
+  function json(response) {
+    return response.json();
+  }
+
+  var promise = fetch(url, ajaxSettings)
+    .then(status)
+    .then(json)
+    .then(function(json) {
+      if(options.success && _.isFunction(options.success)){
         options.success(json);
-        return [json, 'success', res];
-      } else if(options.error && _.isFunction(options.error)) {
-        options.fail(res);
       }
+      return json;
+    }).catch(function(error) {
+      if(options.error && _.isFunction(options.error)) {
+        options.fail(error);
+      }
+      return error;
     });
 
   model.trigger('request', model, promise, options, ajaxSettings);

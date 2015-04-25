@@ -1,7 +1,7 @@
 {
   "name": "ampersand-fetch",
   "description": "Ampersand's sync implemented with Chrome's native .fetch.  Works with React Native too.",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "author": "Stephen Grider <ste.grider@gmail.com",
   "bugs": {
     "url": "https://github.com/stephengrider/ampersand-fetch/issues"
