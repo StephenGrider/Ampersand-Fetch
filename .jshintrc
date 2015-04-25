@@ -5,7 +5,7 @@
     "curly": false,
     "evil": true,
     "white": true,
-    "undef": true,
+    "undef": false,
     "node": true,
     "eqnull": true,
     "predef": [
